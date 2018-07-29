@@ -10,12 +10,14 @@ namespace Battle.System
         public int CurrentDay { get { return _currentDay; } }
         private int _currentDay;
 
-        public delegate void EventHandler(object sender, EventArgs e);
-        public event EventHandler DayPassed;
+        public delegate Action DelDayPassed();
+        public DelDayPassed DayPassed;
 
         public void Initial(Action doneAction)
         {
             _currentDay = 1;
+
+            BattleHandler.Instance.PhaseLogic.DayChange += GoNextDay;
             //BattleHandler.Instance.AddUpdateAction(null);
 
 
@@ -24,7 +26,7 @@ namespace Battle.System
 
         public void GoNextDay()
         {
-            DayPassed?.Invoke(this, EventArgs.Empty);
+            DayPassed?.Invoke();
         }
 
     }

@@ -5,22 +5,27 @@ using UnityEngine;
 
 namespace Battle.System
 {
-    public class PhaseLogic : MonoBehaviour
+    public class PhaseLogic
     {
 
         private List<DayNightInfoTemplate> _dayList;
         private List<DayNightInfoTemplate> _nightList;
 
+        public delegate void delDayChange();
+        public delDayChange DayChange;
 
-        public void CheckStat()
+        public void CheckStat(MonoBehaviour mono)
         {
-            StartCoroutine("CheckStatProcess");
+            mono.StartCoroutine("CheckStatProcess");
         }
 
         public void Initial(Action doneAction)
         {
+            BattleHandler.Instance.WhenDestroy += UnsubscribeAll;
             SetDayNightList();
             doneAction?.Invoke();
+
+
         }
 
         private void SetDayNightList()
@@ -44,10 +49,15 @@ namespace Battle.System
             };
         }
 
+        private void UnsubscribeAll()
+        {
+            DayChange = null;
+        }
+
         IEnumerator CheckStatProcess()
         {
-            
-            yield return null;
+
+            yield return new WaitForSeconds(1);
         }
     }
 }

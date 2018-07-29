@@ -15,9 +15,13 @@ public class BattleHandler : MonoBehaviour
     public MovingCount MovingCount = new MovingCount();
 
 
-    private PhaseLogic phaseLogic;
+    public PhaseLogic PhaseLogic = new PhaseLogic();
     private List<Action> UpdateDo = new List<Action>();
 
+    public delegate void DestroyThis();
+    public DestroyThis WhenDestroy;
+    
+    //Send to all object that subscribe to close
     private void Awake()
     {
         Instance = this;
@@ -27,7 +31,6 @@ public class BattleHandler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        phaseLogic = Instance.gameObject.AddComponent<PhaseLogic>();
         StartCoroutine("SystemLoading");
     }
 
@@ -38,6 +41,11 @@ public class BattleHandler : MonoBehaviour
         {
             todo();
         }
+    }
+
+    private void OnDestroy()
+    {
+        WhenDestroy();
     }
 
     #region Public Methods
@@ -67,7 +75,7 @@ public class BattleHandler : MonoBehaviour
     IEnumerator SystemLoading()
     {
         bool isDone = false;
-        phaseLogic.Initial(() => isDone = true);
+        PhaseLogic.Initial(() => isDone = true);
 
         yield return new WaitUntil(() => isDone);
 
